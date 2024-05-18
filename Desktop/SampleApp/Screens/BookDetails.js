@@ -62,7 +62,6 @@ const BookDetails = ({ navigation, route }) => {
                     <Image
                         source={{ uri: itemDetails?.volumeInfo?.imageLinks?.thumbnail }}
                         style={styles.bookView}
-                        resizeMode='contain'
                     />
                     <View style={styles.startView}>
                         <Text style={styles.starText}>{itemDetails?.volumeInfo?.contentVersion}</Text>
@@ -104,7 +103,7 @@ const styles = StyleSheet.create({
         paddingTop: 20
     },
     bookView: {
-        width: '60%',
+        width: 160,
         height: 250,
         borderRadius: 10,
     },

@@ -8,11 +8,12 @@ const bookList = ({ title, navigation, thumbnail, authors, contentVersion, item 
 
     return (
         <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('BookDetails', { itemDetails: item })}>
+            <View style={{alignItems:'center'}}>
             <Image
                 source={{ uri: thumbnail }}
                 style={styles.bookView}
-                resizeMode='contain'
             />
+            </View>
             <View style={styles.startView}>
                 <Text style={styles.starText}>{contentVersion}</Text>
             </View>
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     bookView: {
-        width: '100%',
+        width: 90,
         height: 140,
         borderRadius: 10
     },
