@@ -2,17 +2,26 @@ import React from 'react';
 import { StyleSheet, View, Image, Text, TouchableOpacity } from 'react-native';
 
 // --------- Component Imports ---------------
-import { COLORS } from '../Constants/colors.js'
+import { COLORS } from '../Constants/colors';
 
-const bookList = ({ title, navigation, thumbnail, authors, contentVersion, item }) => {
+interface BookItemProps {
+    title: string;
+    navigation: any;
+    thumbnail: string;
+    authors: string | null | undefined;
+    contentVersion: string;
+    item: any;
+}
+
+const BookList: React.FC<BookItemProps> = ({ title, navigation, thumbnail, authors, contentVersion, item }) => {
 
     return (
         <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('BookDetails', { itemDetails: item })}>
             <View style={{alignItems:'center'}}>
-            <Image
-                source={{ uri: thumbnail }}
-                style={styles.bookView}
-            />
+                <Image
+                    source={{ uri: thumbnail }}
+                    style={styles.bookView}
+                />
             </View>
             <View style={styles.startView}>
                 <Text style={styles.starText}>{contentVersion}</Text>
@@ -63,4 +72,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default bookList;
+export default BookList;

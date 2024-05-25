@@ -3,60 +3,81 @@ import { StyleSheet, View, FlatList, Text, ActivityIndicator } from 'react-nativ
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // --------- Component Imports ---------------
-import { COLORS } from '../Constants/colors.js'
-import Header from '../Components/header.js'
-import BookList from '../Components/bookList.js'
-import { api } from '../Api';
+import { COLORS } from '../Constants/colors'; 
+import Header from '../Components/header';
+import BookList from '../Components/bookList';
+import { api } from '../Api/index';
 
-const HomeScreen = ({ navigation }) => {
+interface HomeScreenProps {
+  navigation: any;
+}
 
-  const [search, setSearch] = useState('')
-  const [bookList, setBookList] = useState([])
-  const [userDetails, setUserDetails] = useState([])
-  const [onLoading, setOnLoading] = useState(false)
+interface BookItem {
+  id: string;
+  volumeInfo: {
+    title: string;
+    imageLinks: {
+      thumbnail: string;
+    };
+    authors: string;
+    contentVersion: string;
+  };
+}
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
+  const [search, setSearch] = useState('');
+  const [bookList, setBookList] = useState<BookItem[]>([]);
+  const [userDetails, setUserDetails] = useState<any>([]);
+  const [onLoading, setOnLoading] = useState(false);
 
   useEffect(() => {
-    getBookListApi()
-  }, [search])
+    getBookListApi();
+  }, [search]);
 
   useEffect(() => {
-    getUser()
-  }, [])
+    getUser();
+  }, []);
+
+  interface UserDetails {
+    id: string;
+    name: string;
+  }
 
   const getUser = async () => {
     try {
-      const userData = JSON.parse(await AsyncStorage.getItem("USERDETAILS"))
-      console.log('userData', userData)
-      setUserDetails(userData)
+      const userDataString: string | null = await AsyncStorage.getItem("USERDETAILS");
+      const userData: UserDetails | null = userDataString ? JSON.parse(userDataString) as UserDetails : null;
+      console.log('userData', userData);
+      setUserDetails(userData);
     } catch (error) {
       console.log(error);
     }
   };
 
   const getBookListApi = () => {
-    setOnLoading(true)
+    setOnLoading(true);
     api.getBookList(search).then(result => {
-      if (result?.status == 200) {
-        console.log("BookList ----->>", result?.data?.items[3]?.volumeInfo, '---->')
-        setBookList(result?.data?.items)
+      if (result?.status === 200) {
+        console.log("BookList ----->>", result?.data?.items[3]?.volumeInfo, '---->');
+        setBookList(result?.data?.items);
       }
-      setOnLoading(false)
+      setOnLoading(false);
     }).catch(err => {
-      console.log("BookList ----->>", err);
-      setOnLoading(false)
+      console.log("BookList ----->>", err?.response);
+      setOnLoading(false);
     });
-  }
+  };
 
   return (
-
     <View style={styles.container}>
       <Header search={search} setSearch={setSearch} userDetails={userDetails} navigation={navigation} />
       <Text style={styles.headText}>Trending Books</Text>
-      {onLoading
-        ? <View style={{ flex: 1, paddingTop: 10 }}>
+      {onLoading ? (
+        <View style={{ flex: 1, paddingTop: 10 }}>
           <ActivityIndicator size="large" color={COLORS.primaryColor2} />
         </View>
-        : <View style={{ flex: 1 }}>
+      ) : (
+        <View style={{ flex: 1 }}>
           <FlatList
             data={bookList}
             renderItem={({ item }) =>
@@ -72,7 +93,8 @@ const HomeScreen = ({ navigation }) => {
             numColumns={2}
             columnWrapperStyle={styles.columnWrapperStyle}
           />
-        </View>}
+        </View>
+      )}
     </View>
   );
 };

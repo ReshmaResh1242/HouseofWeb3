@@ -5,9 +5,13 @@ import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // --------- Component Imports ---------------
-import { COLORS } from '../Constants/colors.js'
+import { COLORS } from '../Constants/colors'
 
-const LoginScreen = ({ navigation }) => {
+interface Props {
+  navigation: any;
+}
+
+const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
     const signInWithGoogle = async () => {
 

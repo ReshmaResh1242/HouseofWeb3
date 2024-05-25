@@ -1,15 +1,14 @@
 import React from 'react';
 
 // ---------------- import Screen ------------------------
-import StacKNavigation from './Navigation/stackNavigation'
+import StacKNavigation from './Navigation/stackNavigation';
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <>
      <StacKNavigation/>
     </>
   );
 };
-
 
 export default App;

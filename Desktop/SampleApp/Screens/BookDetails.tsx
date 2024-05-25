@@ -3,52 +3,53 @@ import { StyleSheet, View, Image, Text, ScrollView, TouchableOpacity, ToastAndro
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // --------- Component Imports ---------------
-import { COLORS } from '../Constants/colors.js'
-import ListHeader from '../Components/listHeader.js';
+import { COLORS } from '../Constants/colors'; 
+import ListHeader from '../Components/listHeader'; 
 
-const BookDetails = ({ navigation, route }) => {
+interface BookDetailsProps {
+  navigation: any; 
+  route: any;
+}
+
+const BookDetails: React.FC<BookDetailsProps> = ({ navigation, route }) => {
 
     const { itemDetails } = route?.params;
 
-    const [favoriteList, setFavoriteList] = useState([]);
-    const [favoriteAdded, seFavoriteAdded] = useState(false);
+    const [favoriteList, setFavoriteList] = useState<any[]>([]);
+    const [favoriteAdded, setFavoriteAdded] = useState<boolean>(false);
 
     useEffect(() => {
-        getListFavourite()
-    }, [])
+        getListFavourite();
+    }, []);
 
     const addtoFavorites = () => {
         if (!favoriteAdded) {
             const data = [...favoriteList];
             data.push({ itemDetails });
-            AsyncStorage.setItem('favourateData', JSON.stringify(data))
-            seFavoriteAdded(true)
+            AsyncStorage.setItem('favouriteData', JSON.stringify(data));
+            setFavoriteAdded(true);
             ToastAndroid.show('Item added to favorites', ToastAndroid.SHORT);
         } else {
-            const dataSet = favoriteList.filter((item, index) => {
-                if (item?.itemDetails?.id !== itemDetails?.id) {
-                    return true
-                }
-            })
-            AsyncStorage.setItem('favourateData', JSON.stringify(dataSet))
-            seFavoriteAdded(false)
+            const dataSet = favoriteList.filter((item) => item?.itemDetails?.id !== itemDetails?.id);
+            AsyncStorage.setItem('favouriteData', JSON.stringify(dataSet));
+            setFavoriteAdded(false);
             ToastAndroid.show('Item removed from favorites', ToastAndroid.SHORT);
         }
-    }
+    };
 
     const getListFavourite = async () => {
         try {
-            const favorites = JSON.parse(await AsyncStorage.getItem("favourateData"))
-            console.log('favourateData', favorites)
+            const favoritesString: string | null = await AsyncStorage.getItem('favouriteData');
+            const favorites: any[] = favoritesString ? JSON.parse(favoritesString) : [];
+            console.log('favouriteData', favorites);
             if (favorites !== null) {
-                setFavoriteList(favorites)
+                setFavoriteList(favorites);
             }
-            favorites.map((item, index) => {
-                console.log(item?.itemDetails?.id, itemDetails?.id)
-                if (item?.itemDetails?.id.includes(itemDetails?.id)) {
-                    return seFavoriteAdded(true)
+            favorites.forEach((item:any) => {
+                if (item?.itemDetails?.id === itemDetails?.id) {
+                    setFavoriteAdded(true);
                 }
-            })
+            });
         } catch (error) {
             console.log(error);
         }
@@ -56,7 +57,7 @@ const BookDetails = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            <ListHeader navigation={navigation} itemDetails={itemDetails} addtoFavorites={addtoFavorites} favoriteAdded={favoriteAdded} />
+            <ListHeader navigation={navigation} addtoFavorites={addtoFavorites} favoriteAdded={favoriteAdded} />
             <ScrollView>
                 <View style={styles.imageContainer}>
                     <Image
@@ -67,14 +68,14 @@ const BookDetails = ({ navigation, route }) => {
                         <Text style={styles.starText}>{itemDetails?.volumeInfo?.contentVersion}</Text>
                     </View>
                     <Text style={styles.title}>{itemDetails?.volumeInfo?.title}</Text>
-                    <Text style={styles.author}>{itemDetails?.volumeInfo?.authors ? itemDetails?.volumeInfo?.authors : 'Unknown'}</Text>
+                    <Text style={styles.author}>{itemDetails?.volumeInfo?.authors ? itemDetails?.volumeInfo?.authors.join(', ') : 'Unknown'}</Text>
                 </View>
                 <View style={styles.categoryView}>
                     {itemDetails?.volumeInfo?.pageCount &&
                         <Text style={styles.categoryText}>{itemDetails?.volumeInfo?.pageCount} Pages</Text>
                     }
                     {itemDetails?.volumeInfo?.categories &&
-                        <Text style={styles.categoryText}>{itemDetails?.volumeInfo?.categories}</Text>
+                        <Text style={styles.categoryText}>{itemDetails?.volumeInfo?.categories.join(', ')}</Text>
                     }
                     {itemDetails?.volumeInfo?.printType &&
                         <Text style={styles.categoryText}>{itemDetails?.volumeInfo?.printType}</Text>

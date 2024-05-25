@@ -3,31 +3,40 @@ import { StyleSheet, View, FlatList, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // --------- Component Imports ---------------
-import { COLORS } from '../Constants/colors.js'
-import LeftHeader from '../Components/leftHeader.js'
-import BookList from '../Components/bookList.js'
+import { COLORS } from '../Constants/colors'; 
+import LeftHeader from '../Components/leftHeader';
+import BookList from '../Components/bookList';
 
-const FavoriteScreen = ({ navigation }) => {
+interface FavoriteScreenProps {
+  navigation: any;
+}
 
-  const [bookList, setBookList] = useState([])
+interface BookItem {
+  id: string;
+  itemDetails: any;
+}
+
+const FavoriteScreen: React.FC<FavoriteScreenProps> = ({ navigation }) => {
+  const [bookList, setBookList] = useState<BookItem[]>([]);
 
   useEffect(() => {
-    getListFavourite()
+    getListFavourite();
   }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      getListFavourite()
+      getListFavourite();
     });
     return unsubscribe;
   }, [navigation]);
 
   const getListFavourite = async () => {
     try {
-      const favorites = JSON.parse(await AsyncStorage.getItem("favourateData"))
-      console.log('favourateData', favorites)
+      const favoritesString: string | null = await AsyncStorage.getItem('favouriteData');
+      const favorites: any[] = favoritesString ? JSON.parse(favoritesString) : [];
+      console.log('favouriteData', favorites);
       if (favorites !== null) {
-        setBookList(favorites)
+        setBookList(favorites);
       }
     } catch (error) {
       console.log(error);
@@ -35,7 +44,6 @@ const FavoriteScreen = ({ navigation }) => {
   };
 
   return (
-
     <View style={styles.container}>
       <LeftHeader navigation={navigation} header={'Favorite Books'} />
 
@@ -44,21 +52,21 @@ const FavoriteScreen = ({ navigation }) => {
           data={bookList}
           renderItem={({ item }) =>
             <BookList
-              title={item?.itemDetails?.volumeInfo?.title}
-              thumbnail={item?.itemDetails?.volumeInfo?.imageLinks?.thumbnail}
+              title={item.itemDetails?.volumeInfo?.title}
+              thumbnail={item.itemDetails?.volumeInfo?.imageLinks?.thumbnail}
               navigation={navigation}
-              authors={item?.itemDetails?.volumeInfo?.authors}
-              contentVersion={item?.itemDetails?.volumeInfo?.contentVersion}
-              item={item?.itemDetails}
+              authors={item.itemDetails?.volumeInfo?.authors}
+              contentVersion={item.itemDetails?.volumeInfo?.contentVersion}
+              item={item.itemDetails}
             />}
           ListEmptyComponent={() => {
             return (
-              <View style={{ flex: 1, alignItems: 'center', fontSize: 20 }}>
-                <Text style={{ color: COLORS.borderColor }}>No Data Found</Text>
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={{ color: COLORS.borderColor, fontSize: 20 }}>No Data Found</Text>
               </View>
-            )
+            );
           }}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           numColumns={2}
           columnWrapperStyle={styles.columnWrapperStyle}
         />

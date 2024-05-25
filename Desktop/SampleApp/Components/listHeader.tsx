@@ -3,16 +3,22 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // --------- Component Imports ---------------
-import { COLORS } from '../Constants/colors.js'
+import { COLORS } from '../Constants/colors'; 
 
-const listHeader = ({ navigation, addtoFavorites, favoriteAdded }) => {
+interface ListHeaderProps {
+  navigation: any; 
+  addtoFavorites: () => void;
+  favoriteAdded: boolean;
+}
+
+const ListHeader: React.FC<ListHeaderProps> = ({ navigation, addtoFavorites, favoriteAdded }) => {
 
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
                 <MaterialCommunityIcons name="chevron-left" color={COLORS.borderColor} size={30} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => addtoFavorites()}>
+            <TouchableOpacity onPress={addtoFavorites}>
                 {favoriteAdded
                     ? <MaterialCommunityIcons name="heart" color={COLORS.colorRed} size={30} />
                     :
@@ -37,4 +43,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default listHeader;
+export default ListHeader;

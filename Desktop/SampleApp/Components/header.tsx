@@ -3,9 +3,16 @@ import { StyleSheet, View, Image, TextInput, Text, TouchableOpacity } from 'reac
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // --------- Component Imports ---------------
-import { COLORS } from '../Constants/colors.js'
+import { COLORS } from '../Constants/colors';
 
-const header = ({ search, setSearch, userDetails, navigation }) => {
+interface HeaderProps {
+  search: string;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
+  userDetails: { profile: { picture: string; name: string } | null };
+  navigation: any;
+}
+
+const Header: React.FC<HeaderProps> = ({ search, setSearch, userDetails, navigation }) => {
 
   return (
     <View style={styles.container}>
@@ -75,4 +82,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default header;
+export default Header;
